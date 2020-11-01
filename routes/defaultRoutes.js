@@ -1,28 +1,90 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const defaultController = require('../controllers/defaultController');
+const defaultController = require("../controllers/defaultController");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcryptjs");
+const User = require("../models/UserModel").User;
 
+router.all("/*", (req, res, next) => {
+  req.app.locals.layout = "default";
 
+  next();
+});
 
-router.all('/*', (req, res, next) => {
+// noinspection JSCheckFunctionSignatures
+router.route("/").get(defaultController.index);
 
-    req.app.locals.layout = 'default';
+// Defining Local Strategy
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passReqToCallback: true,
+    },
+    (req, email, password, done) => {
+      User.findOne({ email: email }).then((user) => {
+        if (!user) {
+          return done(
+            null,
+            false,
+            req.flash("error-message", "User not found with this email.")
+          );
+        }
 
-    next();
-})
+        bcrypt.compare(password, user.password, (err, passwordMatched) => {
+          if (err) {
+            return err;
+          }
 
+          if (!passwordMatched) {
+            return done(
+              null,
+              false,
+              req.flash("error-message", "Invalid Username or Password")
+            );
+          }
 
+          return done(
+            null,
+            user,
+            req.flash("success-message", "Login Successful")
+          );
+        });
+      });
+    }
+  )
+);
 
-router.route('/')
-    .get(defaultController.index);
-    
-router.route('/login')
-    .get(defaultController.loginGet)
-    .post(defaultController.loginPost);
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
+});
 
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
+});
 
-router.route('/register')
-    .get(defaultController.registerGet)
-    .post(defaultController.registerPost);
+// noinspection JSCheckFunctionSignatures
+router
+  .route("/login")
+  .get(defaultController.loginGet)
+  .post(
+    passport.authenticate("local", {
+      successRedirect: "/admin",
+      failureRedirect: "/login",
+      failureFlash: true,
+      successFlash: true,
+      session: true,
+    }),
+    defaultController.loginPost
+  );
+
+// noinspection JSCheckFunctionSignatures
+router
+  .route("/register")
+  .get(defaultController.registerGet)
+  .post(defaultController.registerPost);
 
 module.exports = router;

@@ -8,24 +8,25 @@
         <div class="col-6 mx-auto">
             <table class="table table-bordered text-center border-success text-white">
                 <thead class="bg-primary">
-                <tr>
-                    <th>Title</th>
-                    <th>Action</th>
-                </tr>
+                    <tr>
+                        <th>Title</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody class="table-hover bg-dark category-list">
-                {{#each categories}}
+                    {{#each categories}}
                     <tr>
 
                         <td>{{title}}</td>
                         <td class="d-flex justify-content-center">
-                            <a href="/admin/category/edit/{{_id}}" class="btn btn-sm btn-warning mr-2" role="button">Edit</a>
+                            <a href="/admin/category/edit/{{_id}}" class="btn btn-sm btn-warning mr-2"
+                                role="button">Edit</a>
                             <form action="/admin/category/{{_id}}?newMethod=DELETE" method="post">
                                 <button class="btn btn-sm btn-danger" type="submit">Delete</button>
                             </form>
                         </td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </tbody>
 
             </table>

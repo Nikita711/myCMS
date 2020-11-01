@@ -1,55 +1,43 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const adminController = require('../controllers/adminController');
+const adminController = require("../controllers/adminController");
+const { isUserAuthenticated } = require("../config/customFunctions");
 
+router.all("/*", isUserAuthenticated, (req, res, next) => {
+  req.app.locals.layout = "admin";
 
-router.all('/*', (req, res, next) => {
-    
-    req.app.locals.layout = 'admin';
-    
-    next();
+  next();
 });
 
 /* DEFAULT ADMIN INDEX ROUTE*/
 
-router.route('/')
-    .get(adminController.index);
-
+router.route("/").get(adminController.index);
 
 /* VARIOUS ADMIN POST ENDPOINTS */
 
-router.route('/posts')
-    .get(adminController.getPosts);
-    
+router.route("/posts").get(adminController.getPosts);
 
+router
+  .route("/posts/create")
+  .get(adminController.getCreatePostPage)
+  .post(adminController.submitCreatePostPage);
 
-router.route('/posts/create')
-    .get(adminController.createPostsGet)
-    .post(adminController.submitPosts);
+router
+  .route("/posts/edit/:id")
+  .get(adminController.getEditPostPage)
+  .put(adminController.submitEditPostPage);
 
-
-router.route('/posts/edit/:id')
-    .get(adminController.editPostGetRoute)
-    .put(adminController.editPostUpdateRoute);
-
-
-router.route('/posts/delete/:id')
-    .delete(adminController.deletePost);
-
+router.route("/posts/delete/:id").delete(adminController.deletePost);
 
 /* ADMIN CATEGORY ROUTES*/
 
-router.route('/category')
-    .get(adminController.getCategories);
+router.route("/category").get(adminController.getCategories);
 
+router.route("/category/create").post(adminController.createCategories);
 
-router.route('/category/create')
-    .post(adminController.createCategories);
-
-
-router.route('/category/edit/:id')
-    .get(adminController.editCategoriesGetRoute)
-    .post(adminController.editCategoriesPostRoute);
-
+router
+  .route("/category/edit/:id")
+  .get(adminController.getEditCategoriesPage)
+  .post(adminController.submitEditCategoriesPage);
 
 module.exports = router;
