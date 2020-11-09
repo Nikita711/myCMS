@@ -1,5 +1,6 @@
 const Post = require("../models/PostModel").Post;
 const Category = require("../models/CategoryModel").Category;
+const Comment = require("../models/CommentModel").Comment;
 const { isEmpty } = require("../config/customFunctions");
 
 module.exports = {
@@ -7,7 +8,7 @@ module.exports = {
     res.render("admin/index");
   },
 
-  /* ADMIN POSTS ENDPOINTS */
+ 
 
   getPosts: (req, res) => {
     Post.find()
@@ -138,5 +139,14 @@ module.exports = {
         });
       });
     }
+  },
+
+  /* COMMENT ROUTE SECTION*/
+  getComments: (req, res) => {
+    Comment.find()
+      .populate("user")
+      .then((comments) => {
+        res.render("admin/comments/index", { comments: comments });
+      });
   },
 };

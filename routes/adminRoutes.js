@@ -40,4 +40,7 @@ router
   .get(adminController.getEditCategoriesPage)
   .post(adminController.submitEditCategoriesPage);
 
+/* ADMIN COMMENT ROUTES */
+router.route("/comment").get(adminController.getComments);
+
 module.exports = router;

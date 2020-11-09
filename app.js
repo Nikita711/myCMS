@@ -1,5 +1,3 @@
-/* Importing Different Modules */
-
 const { globalVariables } = require("./config/configuration");
 
 const express = require("express");
@@ -16,9 +14,8 @@ const passport = require("passport");
 
 const app = express();
 
-// Configure Mongoose to Connect to MongoDB
 mongoose
-  .connect(mongoDbUrl, { useNewUrlParser: true })
+  .connect(mongoDbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((response) => {
     console.log("MongoDB Connected Successfully.");
   })
